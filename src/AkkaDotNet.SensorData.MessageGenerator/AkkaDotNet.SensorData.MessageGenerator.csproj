@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka" Version="1.3.15" />
+    <PackageReference Include="Akka.Remote" Version="1.3.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AkkaDotNet.SensorData.Shared\AkkaDotNet.SensorData.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="akka.conf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="devices.conf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
