@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Akka.Actor;
+using AkkaDotNet.SensorData.Shared.Actors.Device;
 using AkkaDotNet.SensorData.Shared.Messages;
 
 namespace AkkaDotNet.SensorData.Shared.Actors
@@ -15,14 +17,30 @@ namespace AkkaDotNet.SensorData.Shared.Actors
     /// </summary>
     public class DevicesActor : ReceiveActor
     {
+        Dictionary<Guid, IActorRef> _deviceActors = new Dictionary<Guid, IActorRef>();
+
         public DevicesActor()
         {
-            Receive<HelloMessage>(HandleHello);
+            Receive<ConnectDevice>(HandleConnectDevice);
         }
 
-        private void HandleHello(HelloMessage msg)
+        private void HandleConnectDevice(ConnectDevice request)
         {
-            Console.WriteLine("Hello Received");
+            if (!_deviceActors.ContainsKey(request.Id))
+            {
+                CreateDeviceActor(request.Id);
+            }
+            var response = new DeviceConnected(_deviceActors[request.Id]);
+            Sender.Tell(response);
+        }
+
+        private void CreateDeviceActor(Guid deviceId)
+        {
+            var props = DeviceActor.CreateProps(deviceId);
+            var name = $"device-{deviceId}";
+            var deviceActorRef = Context.ActorOf(props, name);
+            
+            _deviceActors[deviceId] = deviceActorRef;
         }
 
         public static Props CreateProps()

@@ -11,35 +11,32 @@ namespace AkkaDotNet.SensorData.MessageGenerator
     {
         private static ActorSystem _actorSystem;
         private static IActorRef _simulatedDevicesActor;
+        private static bool _devicesCreated;
 
         static async Task Main()
         {
             CreateActorSystem();
-            InitializeDevicesActor();
 
             ProcessConsoleCommandsUntilExit();
 
             await StopActorSystem();
         }
 
+        /// <summary>
+        /// Creates the 'client' ActorSystem and a top level actor.
+        /// </summary>
         private static void CreateActorSystem()
         {
             Console.WriteLine("Starting the ActorSystem ...");
             var config = ConfigurationReader.ReadAkkaConfigurationFile();
             _actorSystem = ActorSystem.Create("SensorDataDemo", config);
-        }
-
-        /// <summary>
-        /// Creates a top level actor in the 'client' ActorSystem.
-        /// </summary>
-        private static void InitializeDevicesActor()
-        {
             _simulatedDevicesActor = _actorSystem.ActorOf(SimulatedDevicesActor.CreateProps(), "simulated-devices");
         }
 
         /// <summary>
         /// Processes command line commands until the 'exit' command is passed
-        /// - start: creates the simulated devices
+        /// - start: creates the simulated devices or resumes sending
+        /// - pause: suspends the sending of messages
         /// - exit: stops the loop, causing the program to end
         /// </summary>
         private static void ProcessConsoleCommandsUntilExit()
@@ -48,12 +45,15 @@ namespace AkkaDotNet.SensorData.MessageGenerator
 
             while (!stopped)
             {
-                Console.WriteLine("Please enter your command (start|exit):");
+                Console.WriteLine("Please enter your command (start|pause|exit):");
                 var command = Console.ReadLine();
                 switch (command)
                 {
                     case "start":
-                        CreateSimulatedDevices();
+                        StartSimulatedDevices();
+                        break;
+                    case "pause":
+                        PauseSimulatedDevices();
                         break;
                     case "exit":
                         stopped = true;
@@ -63,16 +63,34 @@ namespace AkkaDotNet.SensorData.MessageGenerator
         }
 
         /// <summary>
-        /// Creates an actor for every device that will be simulated in the 'client' ActorSystem
+        /// Handles the 'start'' command
+        /// Either creates an actor for every device that will be simulated in the 'client' ActorSystem
+        /// Or resumes sending messages from the simulated devices.
+        /// </summary>
+        private static void StartSimulatedDevices()
+        {
+            if (!_devicesCreated)
+            {
+                CreateDevices();
+                
+            }
+            else
+            {
+                ResumeSending();
+            }
+        }
+
+        /// <summary>
+        /// Creates all simulated devices based on the Guid list in devices.conf
         /// These actors will start sending messages to the remote system every 2 seconds.
         /// </summary>
-        private static void CreateSimulatedDevices()
+        private static void CreateDevices()
         {
-            var devicesFile = Directory.GetCurrentDirectory() + "\\devices.conf"; 
-            
+            var devicesFile = Directory.GetCurrentDirectory() + "\\devices.conf";
+
             using var reader = File.OpenText(devicesFile);
-            
-            while(!reader.EndOfStream)
+
+            while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
                 if (Guid.TryParse(line, out var deviceId))
@@ -80,6 +98,27 @@ namespace AkkaDotNet.SensorData.MessageGenerator
                     _simulatedDevicesActor.Tell(new CreateSimulatedDevice(deviceId));
                 }
             }
+
+            _devicesCreated = true;
+            Console.WriteLine("Simulated devices started.");
+        }
+
+        /// <summary>
+        /// Resumes sending messages from the simulated devices
+        /// </summary>
+        private static void ResumeSending()
+        {
+            _simulatedDevicesActor.Tell(new StartSending());
+        }
+
+
+
+        /// <summary>
+        /// Temporarily stops all new messages to be sent from the simulated devices
+        /// </summary>
+        private static void PauseSimulatedDevices()
+        {
+            _simulatedDevicesActor.Tell(new PauseSending());
         }
 
         /// <summary>
