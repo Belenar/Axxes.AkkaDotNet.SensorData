@@ -17,7 +17,7 @@ namespace AkkaDotNet.SensorData.Shared.Actors
     /// </summary>
     public class DevicesActor : ReceiveActor
     {
-        Dictionary<Guid, IActorRef> _deviceActors = new Dictionary<Guid, IActorRef>();
+        private readonly Dictionary<Guid, IActorRef> _deviceActors = new Dictionary<Guid, IActorRef>();
 
         public DevicesActor()
         {
