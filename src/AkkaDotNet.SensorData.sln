@@ -5,11 +5,9 @@ VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AkkaDotNet.SensorData.ActorSystemHost", "AkkaDotNet.SensorData.ActorSystemHost\AkkaDotNet.SensorData.ActorSystemHost.csproj", "{A58822B3-E353-4104-BD9B-28C7C26062FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AkkaDotNet.SensorData.Shared", "AkkaDotNet.SensorData.Shared\AkkaDotNet.SensorData.Shared.csproj", "{678A309B-B7CF-4523-8D31-F684FEEBFD31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AkkaDotNet.SensorData.Shared", "AkkaDotNet.SensorData.Shared\AkkaDotNet.SensorData.Shared.csproj", "{678A309B-B7CF-4523-8D31-F684FEEBFD31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AkkaDotNet.SensorData.DataAccess", "AkkaDotNet.SensorData.DataAccess\AkkaDotNet.SensorData.DataAccess.csproj", "{65550DAB-7E02-44A7-92D1-FD857CDB641D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AkkaDotNet.SensorData.MessageGenerator", "AkkaDotNet.SensorData.MessageGenerator\AkkaDotNet.SensorData.MessageGenerator.csproj", "{54361024-6479-45E2-889E-92658C0ACB57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AkkaDotNet.SensorData.MessageGenerator", "AkkaDotNet.SensorData.MessageGenerator\AkkaDotNet.SensorData.MessageGenerator.csproj", "{54361024-6479-45E2-889E-92658C0ACB57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{678A309B-B7CF-4523-8D31-F684FEEBFD31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{678A309B-B7CF-4523-8D31-F684FEEBFD31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{678A309B-B7CF-4523-8D31-F684FEEBFD31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{65550DAB-7E02-44A7-92D1-FD857CDB641D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65550DAB-7E02-44A7-92D1-FD857CDB641D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65550DAB-7E02-44A7-92D1-FD857CDB641D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65550DAB-7E02-44A7-92D1-FD857CDB641D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54361024-6479-45E2-889E-92658C0ACB57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54361024-6479-45E2-889E-92658C0ACB57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54361024-6479-45E2-889E-92658C0ACB57}.Release|Any CPU.ActiveCfg = Release|Any CPU

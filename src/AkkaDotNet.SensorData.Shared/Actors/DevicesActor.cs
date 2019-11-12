@@ -9,8 +9,6 @@ namespace AkkaDotNet.SensorData.Shared.Actors
     /// <summary>
     /// Address:
     ///     /user/devices
-    /// Startup:
-    ///     Creating a DevicesInitializationActor to get existing devices out of the database.
     /// Responsibilities:
     ///     - Creating device actors
     ///     - Supervising device actors
