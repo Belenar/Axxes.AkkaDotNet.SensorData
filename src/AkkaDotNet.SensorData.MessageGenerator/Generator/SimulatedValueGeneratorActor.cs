@@ -50,7 +50,7 @@ namespace AkkaDotNet.SensorData.MessageGenerator.Generator
         private void SendNextReadingToDevice()
         {
             _currentTime = _currentTime.AddMinutes(1);
-            _currentValue = _currentValue + _random.Next(10);
+            _currentValue = _currentValue + _random.Next(11); // 0 - 10
             var message = new MeterReadingReceived(_currentTime, _currentValue);
             Context.Parent.Tell(message);
         }

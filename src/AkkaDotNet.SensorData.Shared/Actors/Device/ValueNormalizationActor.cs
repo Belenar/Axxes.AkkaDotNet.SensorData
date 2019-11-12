@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Akka.Actor;
 using AkkaDotNet.SensorData.Shared.Helpers;
 using AkkaDotNet.SensorData.Shared.Messages;
@@ -17,21 +18,22 @@ namespace AkkaDotNet.SensorData.Shared.Actors.Device
         public ValueNormalizationActor(IActorRef persistenceActor)
         {
             _persistenceActor = persistenceActor;
-            Receive<ReturnLastNormalizedReading>(HandleReturnLastMeterReading);
+            Receive<ReturnLastNormalizedReadings>(HandleReturnLastMeterReading);
             Receive<MeterReadingReceived>(HandleMeterReadingReceived);
         }
 
         protected override void PreStart()
         {
-           _persistenceActor.Tell(new RequestLastNormalizedReading());
+           _persistenceActor.Tell(new RequestLastNormalizedReadings(1));
         }
 
-        private void HandleReturnLastMeterReading(ReturnLastNormalizedReading message)
+        private void HandleReturnLastMeterReading(ReturnLastNormalizedReadings message)
         {
-            if (message.Reading != null)
+            if (message.Readings != null && message.Readings.Any())
             {
-                SetReferenceValues(message.Reading.Timestamp, message.Reading.MeterReading);
-                _lastMessage = new MeterReadingReceived(message.Reading.Timestamp, message.Reading.MeterReading);
+                var reading = message.Readings.First();
+                SetReferenceValues(reading.Timestamp, reading.MeterReading);
+                _lastMessage = new MeterReadingReceived(reading.Timestamp, reading.MeterReading);
             }
         }
 

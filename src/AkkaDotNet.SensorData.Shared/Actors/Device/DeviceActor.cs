@@ -9,6 +9,7 @@ namespace AkkaDotNet.SensorData.Shared.Actors.Device
         private readonly Guid _deviceId;
         private IActorRef _persistenceActor;
         private IActorRef _normalizationActor;
+        private IActorRef _alertsActor;
 
         public DeviceActor(Guid deviceId)
         {
@@ -28,6 +29,9 @@ namespace AkkaDotNet.SensorData.Shared.Actors.Device
 
             var normalizationProps = ValueNormalizationActor.CreateProps(_persistenceActor);
             _normalizationActor = Context.ActorOf(normalizationProps, "value-normalization");
+
+            var alertsProps = AlertsActor.CreateProps(_deviceId, _persistenceActor);
+            _alertsActor = Context.ActorOf(alertsProps, "alerts");
         }
 
 
@@ -39,6 +43,7 @@ namespace AkkaDotNet.SensorData.Shared.Actors.Device
         private void HandleNormalizedMeterReading(NormalizedMeterReading message)
         {
             _persistenceActor.Tell(message);
+            _alertsActor.Tell(message);
         }
 
         public static Props CreateProps(Guid deviceId)

@@ -18,7 +18,7 @@ namespace AkkaDotNet.SensorData.Shared.Actors.Device
             _deviceId = deviceId;
 
             Command<NormalizedMeterReading>(HandleNormalizeMeterReadingCommand);
-            Command<RequestLastNormalizedReading>(HandleRequestLastNormalizedReading);
+            Command<RequestLastNormalizedReadings>(HandleRequestLastNormalizedReading);
             Command<TakeHourlySnapshotMessage>(_ => TakeHourlySnapshot());
             Command<WrittenReadingsToDatabase>(HandleWrittenReadingsToDatabaseCommand);
 
@@ -95,12 +95,16 @@ namespace AkkaDotNet.SensorData.Shared.Actors.Device
 
         #endregion
 
-        private void HandleRequestLastNormalizedReading(RequestLastNormalizedReading message)
+        #region RequestLastNormalizedReadings
+
+        private void HandleRequestLastNormalizedReading(RequestLastNormalizedReadings message)
         {
-            var lastReading = _state.Items.LastOrDefault()?.Reading;
-            var response = new ReturnLastNormalizedReading(lastReading);
+            var lastReadings = _state.GetLastReadings(message.NumberOfReadings);
+            var response = new ReturnLastNormalizedReadings(lastReadings);
             Sender.Tell(response);
         }
+
+        #endregion
 
         public static Props CreateProps(Guid deviceId)
         {
@@ -132,10 +136,28 @@ namespace AkkaDotNet.SensorData.Shared.Actors.Device
             }
         }
 
+        public NormalizedMeterReading[] GetLastReadings(int numberOfReadings)
+        {
+            var numberOfReturnedReadings = Math.Min(numberOfReadings, Items.Count);
+
+            if (numberOfReturnedReadings == 0)
+                return Array.Empty<NormalizedMeterReading>();
+
+            return Items
+                .Select(i => i.Reading)
+                .OrderByDescending(r => r.Timestamp)
+                .Take(numberOfReturnedReadings)
+                .OrderBy(r => r.Timestamp)
+                .ToArray();
+        }
+
         public void Truncate()
         {
-            var bottomDate = Items.Last().Reading.Timestamp.AddHours(-12);
-            Items.RemoveAll(i => i.Reading.Timestamp < bottomDate && i.Saved);
+            if (Items.Any())
+            {
+                var bottomDate = Items.Last().Reading.Timestamp.AddHours(-12);
+                Items.RemoveAll(i => i.Reading.Timestamp < bottomDate && i.Saved);
+            }
         }
     }
 

@@ -38,7 +38,7 @@ namespace AkkaDotNet.SensorData.ActorSystemHost
 
         private static void InitializeDevicesActor(ActorSystem actorSystem)
         {
-            var devicesActorRef = actorSystem.ActorOf(DevicesActor.CreateProps(), "devices");
+            actorSystem.ActorOf(DevicesActor.CreateProps(), "devices");
         }
 
 
@@ -48,7 +48,7 @@ namespace AkkaDotNet.SensorData.ActorSystemHost
 
             while (!stopped)
             {
-                Console.WriteLine("Please enter your command:");
+                Console.WriteLine("Please type exit to shut down:");
                 var command = Console.ReadLine();
                 switch (command)
                 {
